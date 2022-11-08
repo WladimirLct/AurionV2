@@ -1,0 +1,148 @@
+#planning {
+    position: relative;
+}
+
+#planning h1 {
+    font-size: 3rem;
+    text-align: center;
+    text-decoration: underline 5px solid rgb(var(--secondary-background-color));
+}
+
+.week_buttons {
+    color: rgb(var(--secondary-background-color));
+    position: fixed;
+    display: flex;
+    width: 90%;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    justify-content: space-between;
+}
+
+.week_buttons i {
+    font-size: 2.5rem;
+    transition: 0.5s;
+}
+
+.week_buttons i:hover {
+    scale: 1.1;
+    cursor: pointer;
+}
+
+.table_planning {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 90%;
+    margin: 0 auto;
+    background-color: transparent;
+}
+
+.table_planning div.day {
+    z-index: 2;
+    width: 48%;
+    min-width: 600px;
+    width: min-content;
+    max-width: 780px;
+    margin: 30px auto;
+    padding-bottom: 20px;
+    border-radius: 10px;
+    border: 3px solid rgb(var(--secondary-background-color));
+    background-color: rgba(var(--secondary-background-color), 0.2);
+}
+
+.table_planning tr {
+    display: grid;
+    grid-template-columns: 1fr 0.5fr 2fr 1.5fr;
+    width: 95%;
+    margin: 10px auto;
+    background-color: rgb(var(--secondary-background-color));
+    transition: 0.8s;
+    border-radius: inherit;
+}
+
+.table_planning div.progression {
+    z-index: 2;
+    position: absolute;
+    left: 0;
+    width: 0%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0.5;
+    transition: 0.5s;
+    border-radius: inherit;
+}
+
+.table_planning tr.current_class {
+    position: relative;
+    scale: 1.03;
+    height: inherit;
+    box-shadow: 5px 5px 10px rgb(29, 29, 29);
+    margin-bottom: 10px;
+    margin-top: 7px;
+    transition-delay: 0s, 1.5s, 1.5s, 1.5s;
+    transition-property: scale, transform, opacity;
+}
+
+.table_planning tr.done {
+    scale: 0.5;
+    transform: translateY(-130%);
+    opacity: 0;
+}
+
+.no-class-message {
+    width: 100%;
+    text-align: center;
+    font-size: 2.5rem;
+    filter: drop-shadow(0 0 15px rgba(0, 0, 0, 0.7));
+}
+
+.week-end { 
+    height: 1vh;
+    width: 99%;
+    margin: 0 auto;
+    margin-top: 30px;
+    border-radius: 100vw;
+    background-color: rgb(var(--secondary-background-color));
+}
+
+.table_planning tr.exam {
+    background-color: rgb(143, 31, 31);
+}
+
+@media screen and (max-width: 600px) {
+    #planning h1 {
+        font-size: 3rem;
+        text-align: left;
+        margin-left: 25px;
+    }
+    
+    .week_buttons {
+        z-index: 3;
+        top: 91vh;
+        position: fixed;
+        transform: translateX(-50%) translateY(0);
+        color: rgb(255, 255, 255);
+    }
+
+    .week_buttons i {
+        font-size: 3rem;
+        background-color: rgba(200, 200, 200, 0.5);
+        border-radius: 100vw;
+        padding: 10px;
+    }
+
+    .table_planning td {
+        font-size: 1.7rem;
+        padding: 15px 5px;
+    }
+
+    .table_planning{
+        width: 95%;
+    }
+
+    .table_planning div.day {
+        width: 100%;
+        min-width: min-content;
+    }
+}

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./../css/shared.css">
+    <link rel="stylesheet" href="./../css/index.css">
+    <title>Aurion Login</title>
+</head>
+<body>
+    <form id="login-form">
+        <input type="text" id="login-email" placeholder="Email" required>
+        <input type="password" id="login-password" placeholder="Password" autocomplete="false" required>
+        <div class="inline">
+            <div id="week-option"><span>Semaines à charger :</span><input type="number" id="week-number" value="1" min="1" max="8"></div>
+            <input type="submit" id="login-submit" value="Login">
+        </div>
+    </form>
+    <div id="loading-div">
+        <p><span id="position">0</span> personne(s) devant vous.</p>
+        <div id="loading-ring" class="loading loading--full-height"></div>
+        <p id="loading-text">Authenticating and fetching data...</p>
+    </div>
+    <div class="background">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <path fill="" d="M39,-67.5C47.7,-55.2,49.9,-39.5,56.6,-25.6C63.4,-11.7,74.7,0.3,76.6,13.4C78.5,26.6,71,40.8,61.1,53.8C51.2,66.9,38.9,78.8,24.6,82.3C10.3,85.9,-6,81,-15.9,70.6C-25.8,60.2,-29.1,44.2,-33.3,32.6C-37.4,21,-42.3,13.9,-47.2,4.5C-52.2,-5,-57.2,-16.7,-53.4,-24.1C-49.5,-31.4,-36.8,-34.4,-26.4,-46.1C-16,-57.7,-8,-77.9,3.6,-83.5C15.2,-89,30.3,-79.9,39,-67.5Z" transform="translate(100 100)" />
+        </svg>         
+    </div>
+</body>
+<script src="./../js/login.js"></script>
+</html>

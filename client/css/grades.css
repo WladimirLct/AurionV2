@@ -1,0 +1,7 @@
+.table_grades tr {
+    grid-template-columns: 0.8fr 2fr 1fr;
+}
+.table_grades tr td:nth-child(2) {
+    justify-content: left;
+    text-align: left;
+}
