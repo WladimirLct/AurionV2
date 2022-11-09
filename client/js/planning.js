@@ -13,7 +13,6 @@ let displayed_week = 0;
 Array.from(document.querySelectorAll(".week_btn")).forEach((week_btn, btn_index) => {
     week_btn.addEventListener("click", function() {
         const btn_value = (-1)*((-1)**btn_index);
-        console.log(btn_value);
         showWeek(displayed_week + btn_value);
     })
 });
@@ -51,9 +50,13 @@ function refreshProgression(planning){
     }
 
     let html_current_class = document.getElementById("class_0_" + current_class);
-    [start, end] = [html_current_class.childNodes[1].innerHTML.split(" ")[0].split(":"), html_current_class.childNodes[1].innerHTML.split(" ")[1].split(":")]
-    let remaining_time = diff_hours(hour * 60 + minutes, end[0]*60 + parseInt(end[1]));
-    let progression = (100 - (remaining_time / diff_hours(start[0]*60 + parseInt(start[1]), end[0]*60 + parseInt(end[1]))) * 100).toFixed(2);
+    [start, end] = [html_current_class.getAttribute("class-start").split(":"), html_current_class.getAttribute("class-end").split(":")];
+
+    let remaining_time = diff_hours(hour * 60 + minutes, parseInt(end[0])*60 + parseInt(end[1]));
+    let progression = (100 - (remaining_time / (parseInt(html_current_class.getAttribute("class-length")) * 60)) * 100).toFixed(2);
+
+    console.log(hour, minutes, parseInt(end[0]), parseInt(end[1]));
+    console.log(remaining_time, progression, html_current_class.getAttribute("class-length"));
 
     html_current_class.childNodes[html_current_class.childNodes.length-1].classList.remove("hidden");
     html_current_class.classList.add("current_class");
@@ -93,8 +96,12 @@ function refreshPlanning(weeks) {
         week_index > 0 ? div_week.classList.add("hidden") : null;
         
         let week_announce = document.createElement('h1');
-        week_index == 0 ? week_announce.innerHTML = "Cette semaine :" : week_announce.innerHTML = "Dans " + week_index + " semaine(s) :";
-        div_week.appendChild(week_announce);
+
+        week_index == 0 ? 
+         week_announce.innerHTML = "Cette semaine :" : 
+         week_announce.innerHTML = (week_index < 2 ? "Semaine prochaine :" : `Dans ${week_index} semaines :`);
+        
+         div_week.appendChild(week_announce);
 
         table_planning = document.createElement('table');
         table_planning.classList.add("table_planning");
@@ -106,13 +113,13 @@ function refreshPlanning(weeks) {
         week.forEach((class_, i) => {
             if(class_[1][1].length == 11) { // If the class has a start and end time
                 [start, end] = [class_[1][1]?.split(" ")[0].split(":"), class_[1][1]?.split(" ")[1].split(":")]
-                if(week_index == 0 && (class_[0]<day || class_[0]==day && end[0]<hour || class_[0]==day && end[0]==hour && end[1]<=minutes)){
+                if (week_index == 0 && class_[0] < day || (class_[0] == day && diff_hours(hour*60 + minutes, parseInt(end[0])*60 + parseInt(end[1])) <= 0)){
                     return;
-                } else if (week_index == 0 && class_[0] == day && end[0] >= hour && hour >= start[0]) {
-                    if((start[0] == hour && start[1] <= minutes) || (parseInt(start[0]) + 1 == hour) || (end[0] == hour && end[1] > minutes)){
-                        console.log("Currently in :", class_[1][3], "from",class_[1][1].split(" ")[0], "to", class_[1][1].split(" ")[1]);
-                        current_class = i
-                    }
+                }
+
+                if(week_index == 0 && class_[0] == day && hour >= start[0] && hour <= end[0] && diff_hours(hour * 60 + minutes, end[0]*60 + end[1]) >= 0){
+                    console.log("Currently with", class_[1][3], "until", class_[1][1].split(" ")[1]);
+                    current_class = i
                 }
             }
 
@@ -131,6 +138,7 @@ function refreshPlanning(weeks) {
             let j = 0;
             let tr = document.createElement('tr');
             tr.id = "class_0_" + i;
+            
             class_[1].slice(0, -1).forEach(info => {
                 let td = document.createElement('td');
                 td.id =  "" + i + j;
@@ -141,6 +149,12 @@ function refreshPlanning(weeks) {
                 j++;
             })
             
+            const length = Math.floor( (diff_hours(start[0]*60 + parseInt(start[1]), end[0]*60 + parseInt(end[1]))) / 60);
+            tr.setAttribute("class-start", start[0] + ":" + start[1]);
+            tr.setAttribute("class-end", end[0] + ":" + end[1]);
+            tr.setAttribute("class-length", length);
+            tr.style.minHeight = (80 * length) + "px"
+
             class_[1][4] ? tr.classList.add("exam") : null;
 
             let div = document.createElement('div');
@@ -176,7 +190,7 @@ $(document).ready(function () {
             console.log("Started refreshing again")
             clearInterval(interval);
             refreshProgression(data_planning);
-            interval = setInterval(refreshProgression, 5*60*1000, data_planning);
+            interval = setInterval(refreshProgression, 3*60*1000, data_planning);
         }
     }).blur(function () {
         console.log("Stopped refreshing");
@@ -198,7 +212,7 @@ function getPlanning(){
 	        refreshTime();
             refreshPlanning(data.planning);
             refreshProgression(data.planning);
-            interval = setInterval(refreshProgression, 5*60*1000, data.planning);
+            interval = setInterval(refreshProgression, 3*60*1000, data.planning);
         } else {
             console.log("Failed to get planning form JUNIA");
         }

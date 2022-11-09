@@ -254,7 +254,7 @@ app.get('/dashboard', function(req, res) {
     }
 });
 
-function scrap({req, res}){
+function scrap({req, res, isRefresh}){
     logIn(req.session.email, req.session.password).then(function(result) {
         req.session.loggedIn = result.success;
         if(result.success){
@@ -292,7 +292,11 @@ app.post('/login', function(req, res) {
     console.log("\nLogin request, " + waitingList.length + " in queue...");
     req.session.email = req.body.email;
     req.session.password = req.body.password;
-    req.session.weeks = req.body.weeks;
+    if (req.body.weeks < 1 && req.body.weeks > 8){
+        req.session.weeks = req.body.weeks;
+    } else {
+        req.session.weeks = 1;
+    }
     if (waitingList.length > 0) {
         waitingList.push({req: req, res: res});
     } else {
@@ -315,6 +319,20 @@ app.post('/getAbsences', function(req, res) {
 
 app.post('/getPosition', function(req, res) {
     res.send({position: waitingList.length==0?0:waitingList.length-1});
+});
+
+app.post('/refresh', function(req, res) {
+    if (waitingList.length > 0) {
+        waitingList.push({req: req, res: res, isRefresh: true});
+    } else {
+        waitingList.push({req: req, res: res, isRefresh: true});
+        scrap(waitingList[0]);
+    };
+});
+
+app.post('/logout', function(req, res) {
+    req.session.destroy();
+    res.redirect('/');
 });
 
 server.listen(port, ()=>{

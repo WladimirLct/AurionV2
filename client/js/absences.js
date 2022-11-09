@@ -68,9 +68,9 @@ function displayAbsences(absences) {
         if (j == 0){
             td.innerHTML = "";
           if(cell == 1){
-              td.insertAdjacentHTML('afterbegin', '<i class="fas fa-check green"></i>');
+              td.insertAdjacentHTML('afterbegin', '<i class="icon fas fa-check green"></i>');
           } else {
-              td.insertAdjacentHTML('afterbegin', '<i class="fas fa-times red"></i>');
+              td.insertAdjacentHTML('afterbegin', '<i class="icon fas fa-times red"></i>');
           }
         } else if (j == 1){ 
             const date = cell.split("/");

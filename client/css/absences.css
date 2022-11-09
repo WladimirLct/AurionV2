@@ -1,5 +1,6 @@
 .table_absences tr {
-    grid-template-columns: 0.3fr 0.3fr 0.3fr 1fr 1fr;
+    grid-template-columns: 0.8fr 1fr 0.7fr 2fr 2fr;
+    gap: 5px;
 }
 
 #absences .info {
@@ -26,20 +27,23 @@
 
 
 @media screen and (max-width: 600px) {
-    .table_absences tr {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-around;
+    .table_absences tr td {
+        padding: 10px 0;
     }
 
-    .table_absences tr td {
-        min-width: 20%;
-    }
+    .table_absences .icon {
+        font-size: 2.5rem;
+    }	
+
+    .table_absences tr td:nth-child(3) {
+        flex-wrap: wrap;
+    }	
 
     #absences h1 {
-        opacity: 0;
+        color: transparent;
+        text-decoration: none;
     }
-
+    
     #absences .info {
         height: 80px;
         left: 10px;

@@ -16,6 +16,8 @@ const background = document.querySelector(".background");
 const btn_planning = document.getElementById("btn_planning");
 const btn_grades = document.getElementById("btn_grades");
 const btn_absences = document.getElementById("btn_absences");
+const css = getComputedStyle(document.documentElement);
+
 
 div_grades.style.display = "none";
 div_absences.style.display = "none";
@@ -42,4 +44,30 @@ function resetBurgerAndBackground(){
     burger_btn.classList.remove('hidden');
     cross_btn.classList.add('hidden');
     div_planning.style.display == "none" ? background.classList.add('hidden') : background.classList.remove('hidden') ;
+}
+
+function refresh(){
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    };
+    fetch('/refresh', options)
+     .then(() => {
+        window.location.href = '/dashboard';
+     });
+}
+
+function logout(){
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    };
+    fetch('/logout', options)
+     .then(() => {
+        window.location.href = '/';
+    });
 }

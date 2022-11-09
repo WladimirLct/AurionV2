@@ -76,8 +76,8 @@ button:focus {
     scale: 0;
     position: fixed;
     z-index: 3;
-    top: -50px;
-    right: -35px;
+    top: -100px;
+    right: -100px;
     width: min-content;
     display: flex;
     flex-direction: column;
@@ -87,7 +87,7 @@ button:focus {
 
 #menu.shown {
     scale: 1;
-    transform: translateX(-30%) translateY(55%);
+    transform: translateX(-165px) translateY(140px);
     opacity: 1;
 }
 
@@ -95,6 +95,15 @@ button:focus {
     padding: 10px 20px;
     border-radius: 20px;
     margin-bottom: 20px;
+}
+
+#menu span {
+    display: flex;
+    justify-content: space-around;
+}
+
+#menu span button{
+    width: 45%;
 }
 
 table {
@@ -141,10 +150,12 @@ h2 {
 }
 
 .green {
+    font-weight: 600;
     color: #72B01D;
 }
 
 .red {
+    font-weight: 600;
     color: #e74c3c;
 }
 
@@ -165,7 +176,7 @@ h2 {
     }
 
     #menu {
-        top: -40px;
+        top: -80px;
         right: 0;
     }
 
