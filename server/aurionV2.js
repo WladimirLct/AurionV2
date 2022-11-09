@@ -129,7 +129,7 @@ async function getCalendar(page, nbWeeks){
             await grabClasses(page).then(async function(result){
                 planning[i] = result;
             });
-            await page.setDefaultTimeout(4000); // Timeout
+            await page.setDefaultTimeout(4500); // Timeout
         } catch (error) {
             planning[i] = [];
         }
@@ -292,10 +292,10 @@ app.post('/login', function(req, res) {
     console.log("\nLogin request, " + waitingList.length + " in queue...");
     req.session.email = req.body.email;
     req.session.password = req.body.password;
-    if (req.body.weeks < 1 && req.body.weeks > 8){
-        req.session.weeks = req.body.weeks;
-    } else {
+    if (req.body.weeks < 1 || req.body.weeks > 8){
         req.session.weeks = 1;
+    } else {
+        req.session.weeks = req.body.weeks;
     }
     if (waitingList.length > 0) {
         waitingList.push({req: req, res: res});
@@ -322,6 +322,7 @@ app.post('/getPosition', function(req, res) {
 });
 
 app.post('/refresh', function(req, res) {
+    console.log("\nRefresh request, " + waitingList.length + " in queue...");
     if (waitingList.length > 0) {
         waitingList.push({req: req, res: res, isRefresh: true});
     } else {

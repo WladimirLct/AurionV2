@@ -1,4 +1,5 @@
 const blobs = document.querySelectorAll('.blob');
+let isRefreshing = false;
 
 Array.from(blobs).forEach(blob => {
     blob.style.rotate = Math.random() * 360 + 'deg';
@@ -47,6 +48,10 @@ function resetBurgerAndBackground(){
 }
 
 function refresh(){
+    if (isRefreshing) return;
+    isRefreshing = true;
+    document.getElementById("refresh").classList.add('refreshing');
+
     const options = {
         method: 'POST',
         headers: {

@@ -106,6 +106,12 @@ button:focus {
     width: 45%;
 }
 
+#menu .refreshing {
+    color: var(--secondary-color);
+    transform: rotate(0.16turn);
+    animation: loading 1s ease infinite;
+}
+
 table {
     display: flex;
     flex-direction: column;
@@ -162,6 +168,16 @@ h2 {
 .hidden {
     display: none;
     height: 0;
+}
+
+@keyframes loading {
+    from {
+        transform: rotate(0turn);
+    }
+
+    to {
+        transform: rotate(1turn);
+    }
 }
 
 @media screen and (max-width: 600px) {
