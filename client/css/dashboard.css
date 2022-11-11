@@ -48,7 +48,7 @@ button:focus {
 }
 
 #menu_btn {
-    z-index: 3;
+    z-index: 5;
     position: fixed;
     width: 70px;
     height: 70px;
@@ -73,22 +73,19 @@ button:focus {
 }
 
 #menu {
-    scale: 0;
     position: fixed;
-    z-index: 3;
-    top: -100px;
-    right: -100px;
+    z-index: 4;
+    top: 40px;
+    right: -300px;
     width: min-content;
     display: flex;
     flex-direction: column;
-    transition: 1s;
-    transition-property: scale, transform;
+    filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.3));
+    transition: 0.8s;
 }
 
 #menu.shown {
-    scale: 1;
-    transform: translateX(-165px) translateY(140px);
-    opacity: 1;
+    transform: translateX(-365px);
 }
 
 #menu button {
@@ -192,7 +189,7 @@ h2 {
     }
 
     #menu {
-        top: -80px;
+        top: -320px;
         right: 0;
     }
 
@@ -202,7 +199,7 @@ h2 {
     }
 
     #menu.shown {
-        transform: translateY(50%);
+        transform: translateY(405px);
     }
 
     .background img {

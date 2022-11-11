@@ -5,7 +5,6 @@ const weeks = document.getElementById('week-number');
 const login_button = document.getElementById('login-submit');
 const loading_text = document.getElementById('loading-text');
 const loading_div = document.getElementById('loading-div');
-const position = document.getElementById('position');
 
 loading_div.style.display = 'none';
 
@@ -39,6 +38,7 @@ function sendLoginRequest(email_value, password_value, weeks_value){
                 window.location.href = '/dashboard';
             } else {
                 loading_text.classList.add('red');
+                console.log(data);
                 loading_text.innerHTML = data.message;
                 setTimeout(() => {
                     window.location.href = '/dashboard';
@@ -52,22 +52,5 @@ function sendLoginRequest(email_value, password_value, weeks_value){
                 window.location.href = '/dashboard';
             }, 1500);
             console.log(err);
-        })
-        setTimeout(() => {
-            askForPosition();
-        }, 300);
-}
-
-function askForPosition(){
-    const options = {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-    };
-    fetch('/getPosition', options)
-        .then(res => res.json())
-        .then(data => {
-            position.innerHTML = data.position;
         })
 }

@@ -6,7 +6,7 @@
   "license": "ISC",
   "description": "",
   "scripts": {
-    "nodemon": "nodemon ./server/aurionV2.js"
+    "nodemon": "nodemon ./server/server.js"
   },
   "dependencies": {
     "express": "^4.18.1",

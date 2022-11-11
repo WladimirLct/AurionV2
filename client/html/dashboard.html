@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="//use.fontawesome.com/releases/v6.0.0/css/all.css">
     <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+    <link rel="shortcut icon" href="./../favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="./../css/shared.css">
     <link rel="stylesheet" href="./../css/grades.css">
     <link rel="stylesheet" href="./../css/dashboard.css">
@@ -15,6 +16,8 @@
     <title>Aurion V2</title>
 </head>
 <body>
+    <button id="menu_btn"><i class="fa fa-bars" aria-hidden="true" id="burger_btn"></i><i class="hidden fa-solid fa-xmark" aria-hidden="true" id="cross_btn"></i></button>
+    
     <div id="menu">
         <button id="btn_planning">Planning</button>
         <button id="btn_grades">Notes</button>
@@ -24,8 +27,6 @@
             <button onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i></button>
         </span>
     </div>
-
-    <button id="menu_btn"><i class="fa fa-bars" aria-hidden="true" id="burger_btn"></i><i class="hidden fa-solid fa-xmark" aria-hidden="true" id="cross_btn"></i></button>
 
     <div id="top"></div>
 
