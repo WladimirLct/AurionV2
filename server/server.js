@@ -12,7 +12,7 @@ const session = require('express-session')({
     resave: true,
     saveUninitialized: true,
     cookie: {
-        maxAge: 1000 * 60 * 60 * 8,
+        maxAge: 1000 * 60 * 60 * 10,
         secure: false,
     },
 });
@@ -47,34 +47,35 @@ app.post('/login', function(req, res) {
     req.session.email = req.body.email;
     req.session.password = req.body.password;
 
-    if (req.body.weeks < 1 || req.body.weeks > 8){
+    if (req.body.weeks < 1 || req.body.weeks > 8) {
         req.session.weeks = 1;
     } else {
         req.session.weeks = req.body.weeks;
     }
 
-    new Promise((resolve, reject) => {
+    new Promise((resolve) => {
         scrap({req: req, res: res});
         resolve();
     });
 })
 
-app.post('/getGrades', function(req, res) {
-    res.send({grades: req.session.grades});
-});
-
-app.post('/getPlanning', function(req, res) {
-    res.send({planning: req.session.calendar});
-});
-
-app.post('/getAbsences', function(req, res) {
-    res.send({absences: req.session.absences});
+app.post('/getData', function(req, res) {
+    res.send({planning: req.session.planning, grades: req.session.grades, absences: req.session.absences});
 });
 
 app.post('/refresh', function(req, res) {
+    req.session.email = req.body.email;
+    req.session.password = req.body.password;
+    
+    if (req.body.weeks < 1 || req.body.weeks > 8){
+        req.session.weeks = 1;
+    } else {
+        req.session.weeks = req.body.weeks;
+    }
+    
     console.log(`\nRefresh request, from ${req.session.email.replace(/@.*$/, '')}`);
 
-    new Promise((resolve, reject) => {
+    new Promise((resolve) => {
         scrap({req: req, res: res});
         resolve();
     });

@@ -1,3 +1,4 @@
+const localStorage = window.localStorage;
 const blobs = document.querySelectorAll('.blob');
 let isRefreshing = false;
 
@@ -18,7 +19,6 @@ const btn_planning = document.getElementById("btn_planning");
 const btn_grades = document.getElementById("btn_grades");
 const btn_absences = document.getElementById("btn_absences");
 const css = getComputedStyle(document.documentElement);
-
 
 div_grades.style.display = "none";
 div_absences.style.display = "none";
@@ -47,20 +47,62 @@ function resetBurgerAndBackground(){
     div_planning.style.display == "none" ? background.classList.add('hidden') : background.classList.remove('hidden') ;
 }
 
+
+async function getData(){
+    const url = '/getData';
+    const options = {
+        method: 'POST',
+    }
+    await fetch(url, options)
+     .then(res=>res.json())
+     .then(data => {
+        localStorage.setItem('planning', JSON.stringify(data.planning));
+        localStorage.setItem('grades', JSON.stringify(data.grades));
+        localStorage.setItem('absences', JSON.stringify(data.absences));
+
+        if (localStorage.getItem('planning') && localStorage.getItem('grades') && localStorage.getItem('absences')) {
+            console.log("Found data");
+        } else {
+            console.log("No data found");
+        }
+     })
+}
+
+
 function refresh(){
     if (isRefreshing) return;
+    
     isRefreshing = true;
     document.getElementById("refresh").classList.add('refreshing');
+    document.getElementById("refresh").classList.remove('red');
 
+    const data = {
+        email: localStorage.getItem('email'),
+        password: localStorage.getItem('password'),
+        weeks: localStorage.getItem('weeks'),
+    }
     const options = {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
+        body: JSON.stringify(data)
     };
+
     fetch('/refresh', options)
-     .then(() => {
-        window.location.href = '/dashboard';
+     .then((response) => {
+        if (response.ok) {
+            window.location.href = '/dashboard';
+        } else {
+            isRefreshing = false;
+            document.getElementById("refresh").classList.remove('refreshing');
+            document.getElementById("refresh").classList.add('red');
+        }
+     })
+     .catch((error) => {
+        isRefreshing = false;
+        document.getElementById("refresh").classList.remove('refreshing');
+        document.getElementById("refresh").classList.add('red');
      });
 }
 

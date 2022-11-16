@@ -5,6 +5,7 @@ const weeks = document.getElementById('week-number');
 const login_button = document.getElementById('login-submit');
 const loading_text = document.getElementById('loading-text');
 const loading_div = document.getElementById('loading-div');
+const localStorage = window.localStorage;
 
 loading_div.style.display = 'none';
 
@@ -19,6 +20,10 @@ login_form.addEventListener('submit', (e) => {
 });
 
 function sendLoginRequest(email_value, password_value, weeks_value){
+    localStorage.setItem('email', email_value);
+    localStorage.setItem('password', password_value);
+    localStorage.setItem('weeks', weeks_value);
+
     const data = {
         email: email_value,
         password: password_value,
@@ -31,6 +36,7 @@ function sendLoginRequest(email_value, password_value, weeks_value){
         },
         body: JSON.stringify(data)
     };
+    
     fetch('/login', options)
         .then(res => res.json())
         .then(data => {

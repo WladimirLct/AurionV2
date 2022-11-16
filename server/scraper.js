@@ -34,7 +34,7 @@ function scrap({req, res}){
             console.log(`Started scraping classes of ${req.session.email.replace(/@.*$/, '')}`);
             
             getCalendar(result.page, req.session.weeks).then(function(calendar) {
-                req.session.calendar = calendar;
+                req.session.planning = calendar;
                 console.log(`Started scraping grades of ${req.session.email.replace(/@.*$/, '')}`);
                 
                 getMenuContent(result.page, "grades").then(function(grades) {
@@ -230,23 +230,26 @@ async function grabClasses(page){
         }
         console.log(elems)
         for (let item of elems) {
-            infos[i] = [];
+            infos[i] = {};
             day[i] = Array.prototype.indexOf.call(calendar.children, item.parentElement.parentElement.parentElement.parentElement.parentElement);
             info = item.innerHTML.replace(/\n|\(H\)|-|  /g, '');
-            info = info.replace('<br><br>', '<br>').split('<br>');
-            infos[i][0] = info[0];
-            infos[i][1] = elems_time[i].childNodes[0].innerHTML.replace(/ - /g, ' '); // Time
-            infos[i][3] = info[info.length - 1].replace(/Madame/g, 'Mme.').replace(/Monsieur/g, 'M.'); // Teacher
-            infos[i][4] = item.parentElement.parentElement.classList.contains('est-epreuve');
-            info = info.slice(1, -2);
-            infos[i][2] = info.reverse().join('<br>'); // Text
+            info = info.split('<br>');
+
+            infos[i].title = info[0];
+            infos[i].time = elems_time[i].childNodes[0].innerHTML.replace(/ - /g, ' '); // Time
+            infos[i].description = info.slice(1, -2).join('<br>'); // Description
+            infos[i].teacher = info[info.length - 1].replace(/Madame/g, 'Mme.').replace(/Monsieur/g, 'M.'); // Teacher
+            infos[i].isExam = item.parentElement.parentElement.classList.contains('est-epreuve');
+
+            if (!infos[i].isExam) infos[i].description = info.slice(1, -2).reverse().join('<br>');
+
             i++;
         }
         elems = new Array(elems.length);
         for (let j = 0; j < elems.length; j++) {
-            elems[j] = [];
-            elems[j][0] = day[j];
-            elems[j][1] = infos[j];
+            elems[j] = {};
+            elems[j].day = day[j];
+            Object.assign(elems[j], infos[j]);
         }
         return elems;
     });

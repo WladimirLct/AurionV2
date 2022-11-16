@@ -7,7 +7,7 @@ btn_absences.addEventListener("click", function() {
     clearInterval(interval);
     resetPage();
     div_absences.style.display = "block";
-    getAbsences();
+    displayAbsences();
 });
 
 function getSchoolYear(){
@@ -44,7 +44,7 @@ function updateAbsencesInfo(){
     document.getElementById("nb_hours_absent").innerHTML = Math.floor(hours_absent/60) + ":" +  hours_absent%60;
 }
 
-function displayAbsences(absences) {
+function displayAbsences() {
     if (table_absences) {
         table_absences = document.querySelector('.table_absences');
         count = 0;
@@ -57,7 +57,9 @@ function displayAbsences(absences) {
     }
     table_absences.classList.add('table_absences');
     table_absences.classList.add('row_table');
-    absences.forEach((absence, i) => {
+
+
+    JSON.parse(localStorage.getItem("absences")).forEach((absence, i) => {
       let tr = document.createElement('tr');
       absence.forEach((cell, j) => {
         let td = document.createElement('td');
@@ -83,25 +85,7 @@ function displayAbsences(absences) {
       })
       table_absences.appendChild(tr);
     });
+
     div_absences.appendChild(table_absences);
     updateAbsencesInfo();
-  }
-
-function getAbsences(){
-    const url = '/getAbsences';
-    const options = {
-        method: 'POST',
-    }
-    fetch(url, options)
-    .then(res=>res.json())
-    .then(data => {
-        if (data.absences) {
-            displayAbsences(data.absences)
-        } else {
-            console.log("Failed to get absences from JUNIA");
-        }
-    })
-    .catch(err => {
-        console.log(err);
-    })
   }

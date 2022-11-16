@@ -1,6 +1,6 @@
 let table_planning;
-let current_class;
 let data_planning;
+let current_class;
 
 let date, day, hour, minutes;
 
@@ -8,7 +8,7 @@ const days = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Sa
 
 let interval;
 let displayed_week = 0;
-
+let ready = false;
 
 Array.from(document.querySelectorAll(".week_btn")).forEach((week_btn, btn_index) => {
     week_btn.addEventListener("click", function() {
@@ -16,6 +16,37 @@ Array.from(document.querySelectorAll(".week_btn")).forEach((week_btn, btn_index)
         showWeek(displayed_week + btn_value);
     })
 });
+
+
+btn_planning.addEventListener("click", function() {
+    resetPage();
+    div_planning.style.display = "block";
+    resetBurgerAndBackground();
+    getPlanning();
+});
+
+
+
+getData()
+.then(() => {
+    console.log("Data loaded");
+    ready = true;
+    getPlanning();
+});
+
+
+function refreshTime() {
+    date = new Date();
+    day = date.getDay();
+    hour = date.getHours();
+    minutes = date.getMinutes();
+}
+
+
+function diff_hours(hour1, hour2) {
+    return hour2 - hour1
+}
+
 
 function showWeek(to_show) {
     const weeks = Array.from(document.querySelectorAll(".week"));
@@ -28,24 +59,37 @@ function showWeek(to_show) {
     }
 }
 
-getPlanning();
 
-btn_planning.addEventListener("click", function() {
-    resetPage();
-    div_planning.style.display = "block";
-    resetBurgerAndBackground();
-    getPlanning();
+$(document).ready(function () {
+    $(window).focus(function () {
+        if (!ready) return;
+        if (div_planning.style.display == "block") {
+            console.log("Started refreshing again")
+            clearInterval(interval);
+            refreshProgression(data_planning);
+            interval = setInterval(refreshProgression, 3*60*1000, data_planning);
+        }
+    }).blur(function () {
+        console.log("Stopped refreshing");
+        clearInterval(interval);
+    });
 });
 
-function diff_hours(hour1, hour2) {
-    return hour2 - hour1
+
+function getPlanning(){
+    refreshTime();
+    refreshPlanning();
+    refreshProgression();
+    interval = setInterval(refreshProgression, 3*60*1000);
 }
 
-function refreshProgression(planning){
+
+function refreshProgression(){
     refreshTime();
+
     if (current_class == -1) {
         console.log("Not in class");
-        refreshPlanning(planning);
+        refreshPlanning();
         return;
     }
 
@@ -54,9 +98,6 @@ function refreshProgression(planning){
 
     let remaining_time = diff_hours(hour * 60 + minutes, parseInt(end[0])*60 + parseInt(end[1]));
     let progression = (100 - (remaining_time / (parseInt(html_current_class.getAttribute("class-length")) * 60)) * 100).toFixed(2);
-
-    console.log(hour, minutes, parseInt(end[0]), parseInt(end[1]));
-    console.log(remaining_time, progression, html_current_class.getAttribute("class-length"));
 
     html_current_class.childNodes[html_current_class.childNodes.length-1].classList.remove("hidden");
     html_current_class.classList.add("current_class");
@@ -75,20 +116,14 @@ function refreshProgression(planning){
     html_current_class.childNodes[html_current_class.childNodes.length-1].style.width = progression + "%";
 }
 
-function refreshTime() {
-    date = new Date();
-    day = date.getDay();
-    hour = date.getHours();
-    minutes = date.getMinutes();
-}
 
-function refreshPlanning(weeks) {
+function refreshPlanning() {
     while (div_weeks.firstChild) {
         div_weeks.removeChild(div_weeks.firstChild);
     }
     current_class = -1;
 
-    weeks.forEach((week, week_index) => {
+    JSON.parse(localStorage.getItem("planning")).forEach((week, week_index) => {
         const div_week = document.createElement("div");
         div_week.id = "week_" + week_index;	
         div_week.classList.add("week");
@@ -111,26 +146,27 @@ function refreshPlanning(weeks) {
         let day_div;
 
         week.forEach((class_, i) => {
-            if(class_[1][1].length == 11) { // If the class has a start and end time
-                [start, end] = [class_[1][1]?.split(" ")[0].split(":"), class_[1][1]?.split(" ")[1].split(":")]
-                if (week_index == 0 && class_[0] < day || (class_[0] == day && diff_hours(hour*60 + minutes, parseInt(end[0])*60 + parseInt(end[1])) <= 0)){
+            if(class_.time.length == 11) { // If the class has a start and end time
+                [start, end] = [class_.time?.split(" ")[0].split(":"), class_.time?.split(" ")[1].split(":")]
+                if (week_index == 0 && (class_.day < day || (class_.day == day && diff_hours(hour*60 + minutes, parseInt(end[0])*60 + parseInt(end[1])) <= 0))){
                     return;
                 }
 
-                if(week_index == 0 && class_[0] == day && hour >= start[0] && hour <= end[0] && diff_hours(hour * 60 + minutes, end[0]*60 + end[1]) >= 0){
-                    console.log("Currently with", class_[1][3], "until", class_[1][1].split(" ")[1]);
+                if(week_index == 0 && class_.day == day && hour >= start[0] && hour <= end[0] && diff_hours(hour * 60 + minutes, parseInt(end[0])*60 + parseInt(end[1])) >= 0){
+                    console.log(diff_hours(hour * 60 + minutes, parseInt(end[0])*60 + parseInt(end[1])));
+                    console.log(`Currently with ${class_.teacher}, in ${class_.title} until ${class_.time.split(" ")[1]}`);
                     current_class = i
                 }
             }
 
-            if (currentDay != class_[0]){
+            if (currentDay != class_.day){
                 day_div = document.createElement('div');
                 let text = document.createElement('h2');
                 const day_date = new Date();
-                day_date.setDate(date.getDate() - date.getDay() + week_index*7 + class_[0]);
-                text.innerHTML = days[class_[0]] + " " + day_date.getDate() + "/" + (day_date.getMonth() + 1);
+                day_date.setDate(date.getDate() - date.getDay() + week_index*7 + class_.day);
+                text.innerHTML = days[class_.day] + " " + day_date.getDate() + "/" + (day_date.getMonth() + 1);
                 day_div.classList.add("day");
-                currentDay = class_[0];
+                currentDay = class_.day;
                 day_div.appendChild(text);
                 table_planning.appendChild(day_div);
             }
@@ -139,12 +175,15 @@ function refreshPlanning(weeks) {
             let tr = document.createElement('tr');
             tr.id = "class_0_" + i;
             
-            class_[1].slice(0, -1).forEach(info => {
+            Object.entries(class_).slice(1,-1).forEach(info => {
                 let td = document.createElement('td');
+                let text = document.createElement('p');
                 td.id =  "" + i + j;
                 td.classList.add("class")
                 td.classList.add("td_" + i + j)
-                td.innerHTML = info;
+                text.innerHTML = info[1].replace("<br><br><br>", "<br><br>");
+                if (text.innerHTML.indexOf("<br>") == 0) text.innerHTML = text.innerHTML.slice(4);
+                td.appendChild(text);
                 tr.appendChild(td);
                 j++;
             })
@@ -155,7 +194,7 @@ function refreshPlanning(weeks) {
             tr.setAttribute("class-length", length);
             tr.style.minHeight = (80 * length) + "px"
 
-            class_[1][4] ? tr.classList.add("exam") : null;
+            class_.isExam ? tr.classList.add("exam") : null;
 
             let div = document.createElement('div');
             div.classList.add("progression");
@@ -183,41 +222,3 @@ function refreshPlanning(weeks) {
 
     showWeek(displayed_week);
 }
-
-$(document).ready(function () {
-    $(window).focus(function () {
-        if (div_planning.style.display == "block") {
-            console.log("Started refreshing again")
-            clearInterval(interval);
-            refreshProgression(data_planning);
-            interval = setInterval(refreshProgression, 3*60*1000, data_planning);
-        }
-    }).blur(function () {
-        console.log("Stopped refreshing");
-        clearInterval(interval);
-    });
-});
-
-function getPlanning(){
-    const url = '/getPlanning';
-    const options = {
-        method: 'POST',
-    }
-    fetch(url, options)
-    .then(res=>res.json())
-    .then(data => {
-        if (data.planning) {
-            data_planning = data.planning;
-            clearInterval(interval);
-	        refreshTime();
-            refreshPlanning(data.planning);
-            refreshProgression(data.planning);
-            interval = setInterval(refreshProgression, 3*60*1000, data.planning);
-        } else {
-            console.log("Failed to get planning form JUNIA");
-        }
-    })
-    .catch(err => {
-        console.log(err);
-    })
-  }
